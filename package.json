@@ -1,0 +1,20 @@
+{
+  "name": "bracco-analytics-mcp",
+  "version": "1.0.0",
+  "description": "Read-only MCP server exposing Bracco social-bot analytics to Claude",
+  "type": "module",
+  "bin": {
+    "bracco-analytics-mcp": "./index.mjs"
+  },
+  "main": "./index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
