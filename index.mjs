@@ -156,6 +156,16 @@ server.tool(
   async ({ account, limit }) => toContent(await apiGet('/dm-performance', { account, limit }))
 );
 
+server.tool(
+  'get_warm_leads',
+  'Users who replied to our DM with "interested" or "question" sentiment — the highest-value leads the team should personally follow up with. Includes their handle, reply text, and the original DM they received.',
+  {
+    account: z.string(),
+    limit:   z.number().int().min(1).max(500).optional().describe('Default 100'),
+  },
+  async ({ account, limit }) => toContent(await apiGet('/warm-leads', { account, limit }))
+);
+
 // ── Start ────────────────────────────────────────────────────────────────────
 const transport = new StdioServerTransport();
 await server.connect(transport);
