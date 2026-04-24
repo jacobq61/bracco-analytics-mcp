@@ -166,6 +166,59 @@ server.tool(
   async ({ account, limit }) => toContent(await apiGet('/warm-leads', { account, limit }))
 );
 
+// ── Odds-reply pipeline (PlayBracco replies on Bracco sport posts) ──────────
+server.tool(
+  'get_odds_replies',
+  'Recent decisions made by the PlayBracco odds-reply pipeline. Each row shows: parent tweet from BraccoBaseball/NFL, extracted player+event, looked-up odds, status (replied/scheduled/skipped/would_have_replied), and either the posted reply or the planned reply (if feature flag is off / dry-run).',
+  { limit: z.number().int().min(1).max(500).optional().describe('Default 50') },
+  async ({ limit }) => toContent(await apiGet('/odds-replies', { limit }))
+);
+
+server.tool(
+  'get_odds_reply_summary',
+  'Last 7 days of odds-reply pipeline outcomes — counts by status and by skip reason. Use this to see whether the system is finding matches, where it\'s skipping, and how many replies have actually fired.',
+  {},
+  async () => toContent(await apiGet('/odds-reply-summary'))
+);
+
+// ── bet105 slip-comparison pipeline ─────────────────────────────────────────
+server.tool(
+  'get_slip_comparisons',
+  'Recent betslip-comparison decisions for bet105. Each row shows: original slip tweet, parsed slip data (source book, stake, payout), bet105 reprice (payout, dollar difference, percent more), and the planned or posted reply.',
+  { limit: z.number().int().min(1).max(500).optional().describe('Default 50') },
+  async ({ limit }) => toContent(await apiGet('/slip-comparisons', { limit }))
+);
+
+server.tool(
+  'get_slip_summary',
+  'Last 7 days of bet105 slip-comparison outcomes — counts by status and skip reason. Tells you whether the vision parser is finding usable slips and how often we have a real comparison opportunity.',
+  {},
+  async () => toContent(await apiGet('/slip-summary'))
+);
+
+// ── bet105 winners-welcome (limit/ban complaint replies) ───────────────────
+server.tool(
+  'get_winners_welcome',
+  'Recent bet105 "Winners Welcome" replies — users complaining about being limited / closed / banned by other sportsbooks, and the bet105 callout reply that went out (or would have).',
+  { limit: z.number().int().min(1).max(500).optional().describe('Default 50') },
+  async ({ limit }) => toContent(await apiGet('/winners-welcome', { limit }))
+);
+
+server.tool(
+  'get_winners_welcome_summary',
+  'Last 7 days of Winners Welcome outcomes — counts by status. Shows whether the system is finding limit complaints and how often we\'re replying.',
+  {},
+  async () => toContent(await apiGet('/winners-welcome-summary'))
+);
+
+// ── Daily recap ─────────────────────────────────────────────────────────────
+server.tool(
+  'get_recap_history',
+  'Recent daily recap posts (the 11pm ET "biggest wins of the day" thread from PlayBracco and bet105). Shows date, status, winner count, and the actual text that was posted.',
+  { limit: z.number().int().min(1).max(60).optional().describe('Default 14 days') },
+  async ({ limit }) => toContent(await apiGet('/recap-history', { limit }))
+);
+
 // ── Start ────────────────────────────────────────────────────────────────────
 const transport = new StdioServerTransport();
 await server.connect(transport);
