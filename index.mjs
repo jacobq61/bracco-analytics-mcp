@@ -219,6 +219,23 @@ server.tool(
   async ({ limit }) => toContent(await apiGet('/recap-history', { limit }))
 );
 
+server.tool(
+  'get_amplifications',
+  'PlayBracco retweets + quote-tweets of viral sport-account posts. Shows source tweet, engagement at amplify time, what was posted, and timestamps. Use to see how aggressively PlayBracco is piggybacking on viral hits from BraccoBaseball / BraccoNFL.',
+  { limit: z.number().int().min(1).max(200).optional().describe('Default 30') },
+  async ({ limit }) => toContent(await apiGet('/amplifications', { limit }))
+);
+
+server.tool(
+  'get_auto_reply_drafts',
+  'PlayBracco auto-reply pipeline drafts — what Claude generated (or would have generated) in response to question/interested DMs. Each row shows the user question, the drafted reply, sentiment, and status (sent / would_have_sent / skipped). Use to review the auto-reply system before flipping the live flag.',
+  {
+    account: z.string().describe('Account name, e.g. "playbracco"'),
+    limit:   z.number().int().min(1).max(200).optional().describe('Default 50'),
+  },
+  async ({ account, limit }) => toContent(await apiGet('/auto-reply-drafts', { account, limit }))
+);
+
 // ── Start ────────────────────────────────────────────────────────────────────
 const transport = new StdioServerTransport();
 await server.connect(transport);
